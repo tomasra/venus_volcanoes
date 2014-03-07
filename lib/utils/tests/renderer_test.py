@@ -1,7 +1,7 @@
 import os
 import unittest
 import png
-from lib.utils.renderer import render_png, render_png_to_file
+from lib.utils.renderer import render_png, render_png_to_file, render_png_raw
 from lib.models import RawSignal
 
 
@@ -41,3 +41,11 @@ class RendererTests(unittest.TestCase):
         # Cleanup
         if os.path.exists(test_filepath):
             os.remove(test_filepath)
+
+    def test_render_png_for_web(self):
+        """
+        Checks if signal is rendered and its raw png data is returned
+        """
+        signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
+        image_data = render_png_raw(signal)
+        self.assertTrue('PNG' in image_data)
