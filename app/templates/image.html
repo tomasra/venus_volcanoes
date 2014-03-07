@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block sidebar %}
+    <ul class="nav nav-stacked" id="sidebar">
+        {% for image_name in image_list %}
+            <li>
+                <a href="/images/{{ image_name }}">{{ image_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    {% if selected_image %}
+        <img src="/images/render/{{ selected_image }}" alt="">
+    {% else %}
+        <p>Please select an image.</p>
+    {% endif %}
+{% endblock %}
