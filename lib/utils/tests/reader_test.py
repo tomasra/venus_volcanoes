@@ -1,6 +1,6 @@
 import unittest
 import os
-from lib.utils.reader import read_signal, read_signals, read_lxyr
+from lib.utils.reader import read_signal, read_signals, read_lxyr, list_signals
 from lib.models import RawSignal, GroundTruth
 
 
@@ -10,12 +10,38 @@ class ReaderTests(unittest.TestCase):
         Reads one signal from test spr/sdt files
         """
         cwd = os.path.dirname(os.path.abspath(__file__))
-        spr_path = os.path.join(cwd, 'test_files/test3.spr')
-        signal = read_signal(spr_path)
+        spr_path = os.path.join(cwd, 'test_files/')
+        signal = read_signal(spr_path, 'test3')
         self.assertEqual(signal.rows, 8)
         self.assertEqual(signal.cols, 4)
         self.assertSequenceEqual(signal.data, [i for i in xrange(0, 32)])
         self.assertEqual(signal.name, "test3")
+
+    def test_read_one_signal_failure(self):
+        """
+        Try to read non-existing signal
+        or provide invalid directory name
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        dir1 = os.path.join(cwd, 'test_files/')
+        dir2 = '/home/tomas/here-be-dragons/'
+        signal1 = read_signal(dir1, 'here-be-dragons')
+        signal2 = read_signal(dir2, 'test3')
+        self.assertIsNone(signal1)
+        self.assertIsNone(signal2)
+
+    def test_list_signal_directory(self):
+        """
+        Enumerate names of SPR/SDT file pairs
+        in given directory
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        signal_dir = os.path.join(cwd, 'test_files/')
+        signal_names = list_signals(signal_dir)
+        self.assertSequenceEqual(
+            sorted(signal_names),
+            sorted(['test1', 'test2', 'test3'])
+        )
 
     def test_read_multiple_signals(self):
         """
