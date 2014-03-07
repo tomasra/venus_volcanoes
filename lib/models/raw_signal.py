@@ -1,6 +1,3 @@
-import itertools
-
-
 class RawSignal(object):
     def __init__(self, rows, cols, data, name=None):
         self.rows = rows
@@ -55,5 +52,5 @@ class RawSignal(object):
                 for point in row[p1[0]:p1[0] + cols]
             ]
             return RawSignal(rows, cols, data)
-        except Exception, e:
+        except Exception:
             raise ValueError("Invalid rectangle points")

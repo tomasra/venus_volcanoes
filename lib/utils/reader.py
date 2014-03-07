@@ -1,4 +1,3 @@
-import glob
 import os
 from lib.models import RawSignal, GroundTruth
 
@@ -11,16 +10,18 @@ def read_signal(spr_path):
 
     # Read .spr file
     with open(spr_path, 'r') as f:
-        num = int(f.readline())
+        # num not needed at the moment
+        f.readline()
         cols = int(f.readline())
         # not needed
         f.readline()
         f.readline()
         rows = int(f.readline())
         # not needed
-        junk = f.readline()
-        junk = f.readline()
-        dtype = int(f.readline())
+        f.readline()
+        f.readline()
+        # dtype not needed at the moment
+        f.readline()
 
     # Read .sdt file
     sdt_path = os.path.splitext(spr_path)[0] + '.sdt'

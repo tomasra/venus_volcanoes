@@ -1,5 +1,4 @@
 import png
-from lib.models import RawSignal
 
 
 def render_png(signal):
