@@ -11,7 +11,16 @@
 
 {% block content %}
     {% if selected_image %}
-        <img src="/images/render/{{ selected_image }}" alt="">
+        <canvas id="image_canvas" width="1024" height="1024"></canvas>
+        <script type='text/javascript'>
+            var canvas = document.getElementById('image_canvas');
+            var context = canvas.getContext('2d');
+            var img = new Image();
+            img.onload = function() {
+                context.drawImage(img, 0, 0);
+            }
+            img.src = "/images/render/{{ selected_image }}";
+        </script>
     {% else %}
         <p>Please select an image.</p>
     {% endif %}
