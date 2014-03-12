@@ -1,8 +1,10 @@
+import os
+import json
 from app import app
 from flask import abort, render_template, make_response
 
-from config import IMAGE_DIR
-from lib.utils.reader import list_signals, read_signal
+from config import IMAGE_DIR, GROUND_TRUTH_DIR
+from lib.utils.reader import list_signals, read_signal, read_lxyr
 from lib.utils.renderer import render_png_raw
 
 
@@ -39,3 +41,10 @@ def image_render(image_name):
         return response
     else:
         abort(404)
+
+
+@app.route('/images/ground_truths/<image_name>')
+def ground_truths(image_name):
+    filepath = os.path.join(GROUND_TRUTH_DIR, image_name + '.lxyr')
+    gts = read_lxyr(filepath)
+    return json.dumps([gt.__dict__ for gt in gts])
