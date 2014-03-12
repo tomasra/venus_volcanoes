@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from app import app
 from flask import abort, render_template, make_response
 
@@ -13,18 +14,13 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/images')
-def images():
-    lst = sorted(list_signals(IMAGE_DIR))
-    return render_template(
-        'image.html',
-        image_list=lst,
-        selected_image=None)
-
-
+@app.route('/images', defaults={'image_name': None})
 @app.route('/images/<image_name>')
-def image_select(image_name):
-    lst = sorted(list_signals(IMAGE_DIR))
+def images(image_name):
+    # Sort images by number
+    lst = sorted(
+        list_signals(IMAGE_DIR),
+        key=lambda item: int(re.search(r'\d+', item).group()))
     return render_template(
         'image.html',
         image_list=lst,
