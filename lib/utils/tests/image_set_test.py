@@ -38,3 +38,14 @@ class ImageSetTests(unittest.TestCase):
             [3, 4, 0])
         # no ground truths for this signal
         self.assertEquals(len(image_set['test2'].ground_truths), 0)
+
+    def test_make_image_set_with_name_filter(self):
+        """
+        Make image set only from specified images in the directory
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        test_dir = os.path.join(cwd, 'test_files/')
+        image_set = ImageSet(test_dir, image_names=['test1', 'test3'])
+        self.assertEquals(len(image_set), 2)
+        self.assertIsNotNone(image_set['test1'])
+        self.assertIsNotNone(image_set['test3'])
