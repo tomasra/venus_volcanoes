@@ -71,10 +71,11 @@ def read_signals(directory):
     ]
 
 
-def read_lxyr(filepath):
+def read_lxyr(directory, signal_name):
     """
     Reads a list of ground truths from lxyr file
     """
+    filepath = os.path.join(directory, signal_name + '.lxyr')
     with open(filepath, 'r') as f:
         ground_truths = [
             _parse_lxyr_entry(line)
@@ -84,6 +85,17 @@ def read_lxyr(filepath):
             if line.strip()
         ]
     return ground_truths
+
+
+def read_lxyrs(directory):
+    """
+    Reads dict of all ground truth files from directory
+    """
+    gt_names = _get_lxyr_list(directory)
+    return dict(zip(
+        gt_names,
+        [read_lxyr(directory, gt_name) for gt_name in gt_names]
+    ))
 
 
 def _parse_lxyr_entry(line):
@@ -114,3 +126,19 @@ def _get_signal_filenames(directory, signal_name):
     else:
         # One or both files not found?
         return None
+
+
+def _get_lxyr_list(directory):
+    """
+    Returns .lxyr file list from specified directory.
+    Only filenames without extensions are returned
+    """
+    return [
+        # Unique filenames without extensions
+        signal_name
+        for signal_name in set([
+            os.path.splitext(filename)[0]
+            for filename in os.listdir(directory)
+            if os.path.splitext(filename)[1] == ".lxyr"
+        ])
+    ]

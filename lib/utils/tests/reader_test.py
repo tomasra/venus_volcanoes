@@ -1,6 +1,7 @@
 import unittest
 import os
-from lib.utils.reader import read_signal, read_signals, read_lxyr, list_signals
+from lib.utils.reader import read_signal, read_signals, list_signals
+from lib.utils.reader import read_lxyr, read_lxyrs
 from lib.models import RawSignal, GroundTruth
 
 
@@ -63,8 +64,10 @@ class ReaderTests(unittest.TestCase):
         Read ground truths from file
         """
         cwd = os.path.dirname(os.path.abspath(__file__))
-        gt_file = os.path.join(cwd, 'test_files/test_gt.lxyr')
-        ground_truths = read_lxyr(gt_file)
+        # gt_file = os.path.join(cwd, 'test_files/test_gt.lxyr')
+        # ground_truths = read_lxyr(gt_file)
+        test_dir = os.path.join(cwd, 'test_files/')
+        ground_truths = read_lxyr(test_dir, 'test_gt')
         # print ground_truths
         self.assertTrue(any(
             gt for gt in ground_truths
@@ -74,3 +77,14 @@ class ReaderTests(unittest.TestCase):
             gt for gt in ground_truths
             if gt.x == 119 and gt.y == 631
             and gt.radius == 15.0 and gt.class_value == 4))
+
+    def test_read_multiple_lxyrs(self):
+        """
+        Read multiple ground truth files
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        test_dir = os.path.join(cwd, 'test_files/')
+        ground_truths = read_lxyrs(test_dir)
+        self.assertEquals(len(ground_truths), 2)
+        self.assertEquals(len(ground_truths['test1']), 3)
+        self.assertEquals(len(ground_truths['test_gt']), 2)

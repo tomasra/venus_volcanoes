@@ -1,9 +1,13 @@
+import numpy as np
+
+
 class RawSignal(object):
     def __init__(self, rows, cols, data, name=None):
         self.rows = rows
         self.cols = cols
         self.data = data
         self.name = name
+        self.ground_truths = []
 
     def __getitem__(self, key):
         """
@@ -54,3 +58,9 @@ class RawSignal(object):
             return RawSignal(rows, cols, data)
         except Exception:
             raise ValueError("Invalid rectangle points")
+
+    def to_np_vector(self):
+        """
+        Returns image data as numpy vector
+        """
+        return np.array(self.data)

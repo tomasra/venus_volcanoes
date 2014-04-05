@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 from lib.models import RawSignal
 
 
@@ -62,3 +63,14 @@ class RawSignalTests(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: signal.extract_rectangle("a", "b"))
+
+    def test_signal_to_np_vector(self):
+        """
+        Convert signal data to numpy vector
+        """
+        data = [i for i in xrange(0, 6)]
+        rows, cols = 2, 3
+        signal = RawSignal(rows, cols, data)
+        actual = signal.to_np_vector()
+        expected = np.array(data)
+        self.assertSequenceEqual(actual, expected)
