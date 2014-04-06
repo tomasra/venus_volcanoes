@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 from lib.models import RawSignal
 
 
@@ -33,7 +32,7 @@ class RawSignalTests(unittest.TestCase):
         data = [i for i in xrange(0, 16)]
         rows, cols = 4, 4
         signal = RawSignal(rows, cols, data)
-        new_signal = signal.extract_rectangle((1, 1), (2, 2))
+        new_signal = signal.extract_rectangle(((1, 1), (2, 2)))
         self.assertSequenceEqual(new_signal.data, [5, 6, 9, 10])
 
     def test_extract_rectangle_invalid_points(self):
@@ -46,31 +45,31 @@ class RawSignalTests(unittest.TestCase):
         # top-left point out of range
         self.assertRaises(
             ValueError,
-            lambda: signal.extract_rectangle((-1, 2), (3, 3)))
+            lambda: signal.extract_rectangle(((-1, 2), (3, 3))))
         # bottom-right point out of range
         self.assertRaises(
             ValueError,
-            lambda: signal.extract_rectangle((1, 1), (99, 99)))
+            lambda: signal.extract_rectangle(((1, 1), (99, 99))))
         # reversed points
         self.assertRaises(
             ValueError,
-            lambda: signal.extract_rectangle((3, 3), (1, 1)))
+            lambda: signal.extract_rectangle(((3, 3), (1, 1))))
         # requested rectangle larger than original
         self.assertRaises(
             ValueError,
-            lambda: signal.extract_rectangle((0, 0), (4, 4)))
+            lambda: signal.extract_rectangle(((0, 0), (4, 4))))
         # invalid parameter types
         self.assertRaises(
             ValueError,
-            lambda: signal.extract_rectangle("a", "b"))
+            lambda: signal.extract_rectangle(("a", "b")))
 
-    def test_signal_to_np_vector(self):
+    def test_signal_to_vector(self):
         """
-        Convert signal data to numpy vector
+        Flatten 2D signal data into simple vector
         """
         data = [i for i in xrange(0, 6)]
         rows, cols = 2, 3
         signal = RawSignal(rows, cols, data)
-        actual = signal.to_np_vector()
-        expected = np.array(data)
+        actual = signal.to_vector()
+        expected = [0, 1, 2, 3, 4, 5]
         self.assertSequenceEqual(actual, expected)

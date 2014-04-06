@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 
 
 class RawSignal(object):
@@ -31,12 +31,13 @@ class RawSignal(object):
         for i in range(0, self.rows):
             yield self[i]
 
-    def extract_rectangle(self, p1, p2):
+    def extract_rectangle(self, rectangle):
         """
         Returns rectangle fragment of image data
         as a new RawSignal object.
         p1 and p2 - top left and bottom right points, respectively
         """
+        p1, p2 = rectangle[0], rectangle[1]
         try:
             # Increment cols/rows to allow returning a single item
             # if both rectangle points are the same
@@ -59,8 +60,18 @@ class RawSignal(object):
         except Exception:
             raise ValueError("Invalid rectangle points")
 
-    def to_np_vector(self):
+    def ground_truth_images(self, radius=None):
         """
-        Returns image data as numpy vector
+        Returns associated ground truths as images,
+        with an option to override radius
         """
-        return np.array(self.data)
+        return [
+            self.extract_rectangle(gt.get_rectangle(radius))
+            for gt in self.ground_truths
+        ]
+
+    def to_vector(self):
+        """
+        Returns image data as simple vector
+        """
+        return self.data
