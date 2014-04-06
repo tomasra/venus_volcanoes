@@ -8,7 +8,7 @@ class GroundTruthTests(unittest.TestCase):
         Checks if ground truth circle is correctly returned as a rectangle.
         """
         gt = GroundTruth(10, 10, 2)
-        expected = [(8, 8), (12, 12)]
+        expected = ((8, 8), (12, 12))
         self.assertEquals(gt.get_rectangle(), expected)
 
     def test_get_rectangle_with_float_radius(self):
@@ -18,7 +18,16 @@ class GroundTruthTests(unittest.TestCase):
         """
         gt1 = GroundTruth(10, 10, 2.4)
         gt2 = GroundTruth(10, 10, 2.5)
-        expected1 = [(8, 8), (12, 12)]
-        expected2 = [(7, 7), (13, 13)]
+        expected1 = ((8, 8), (12, 12))
+        expected2 = ((7, 7), (13, 13))
         self.assertEquals(gt1.get_rectangle(), expected1)
         self.assertEquals(gt2.get_rectangle(), expected2)
+
+    def test_get_rectangle_with_overriden_radius(self):
+        """
+        Should be possible to override object's radius
+        """
+        gt = GroundTruth(10, 10, 2)
+        actual = gt.get_rectangle(3)
+        expected = ((7, 7), (13, 13))
+        self.assertEquals(actual, expected)

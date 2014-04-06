@@ -5,17 +5,21 @@ class GroundTruth(object):
         self.radius = radius
         self.class_value = class_value
 
-    def get_rectangle(self):
+    def get_rectangle(self, radius=None):
         """
         Returns a bounding rectangle a list of two tuples
         (top-left and bottom-right points).
+        Radius can be overriden.
         """
+        if not radius:
+            radius = self.radius
+
         p1 = (
-            int(self.x - round(self.radius)),
-            int(self.y - round(self.radius))
+            int(self.x - round(radius)),
+            int(self.y - round(radius))
         )
         p2 = (
-            int(self.x + round(self.radius)),
-            int(self.y + round(self.radius))
+            int(self.x + round(radius)),
+            int(self.y + round(radius))
         )
-        return [p1, p2]
+        return (p1, p2)
