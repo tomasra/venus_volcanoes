@@ -60,15 +60,22 @@ def read_signal(directory, signal_name):
         return None
 
 
-def read_signals(directory):
+def read_signals(directory, image_names=None):
     """
     Enumerates all valid spr/sdt file pairs in given directory
     and creates a list of signal objects
     """
-    return [
-        read_signal(directory, signal_name)
-        for signal_name in list_signals(directory)
-    ]
+    if image_names:
+        return [
+            read_signal(directory, name)
+            for name in list_signals(directory)
+            if name in image_names
+        ]
+    else:
+        return [
+            read_signal(directory, name)
+            for name in list_signals(directory)
+        ]
 
 
 def read_lxyr(directory, signal_name):

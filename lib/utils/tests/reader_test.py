@@ -2,7 +2,6 @@ import unittest
 import os
 from lib.utils.reader import read_signal, read_signals, list_signals
 from lib.utils.reader import read_lxyr, read_lxyrs
-from lib.models import RawSignal, GroundTruth
 
 
 class ReaderTests(unittest.TestCase):
@@ -58,6 +57,15 @@ class ReaderTests(unittest.TestCase):
             any(signal for signal in signals if signal.name == "test2"))
         self.assertTrue(
             any(signal for signal in signals if signal.name == "test3"))
+
+    def test_read_multiple_specified_signals(self):
+        """
+        Reads only specified signals from the directory
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        test_dir = os.path.join(cwd, 'test_files/')
+        signals = read_signals(test_dir, ['test2', 'test3'])
+        self.assertEquals(len(signals), 2)
 
     def test_read_lxyr(self):
         """
