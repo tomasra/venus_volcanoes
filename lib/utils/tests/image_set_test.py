@@ -49,3 +49,17 @@ class ImageSetTests(unittest.TestCase):
         self.assertEquals(len(image_set), 2)
         self.assertIsNotNone(image_set['test1'])
         self.assertIsNotNone(image_set['test3'])
+
+    def test_get_ground_truth_classes(self):
+        """
+        Collect a list of ground truth classes of all signals
+        """
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        test_dir = os.path.join(cwd, 'test_files/')
+        image_set = ImageSet(test_dir, test_dir, image_names=['test1', 'test3'])
+        classes = image_set.ground_truth_classes()
+        self.assertEquals(classes.count(1), 1)
+        self.assertEquals(classes.count(2), 1)
+        self.assertEquals(classes.count(3), 2)
+        self.assertEquals(classes.count(4), 2)
+        self.assertEquals(classes.count(0), 1)

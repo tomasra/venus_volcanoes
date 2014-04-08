@@ -55,3 +55,13 @@ class ImageSet(object):
             ]
             for gt_image in gt_images
         ]
+
+    def ground_truth_classes(self):
+        """
+        Return all ground truth classes
+        """
+        return [
+            gt.class_value
+            for image in self
+            for gt in image.ground_truths
+        ]

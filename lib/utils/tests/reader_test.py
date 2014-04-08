@@ -93,6 +93,6 @@ class ReaderTests(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         test_dir = os.path.join(cwd, 'test_files/')
         ground_truths = read_lxyrs(test_dir)
-        self.assertEquals(len(ground_truths), 2)
+        self.assertEquals(len(ground_truths), 3)
         self.assertEquals(len(ground_truths['test1']), 3)
         self.assertEquals(len(ground_truths['test_gt']), 2)
