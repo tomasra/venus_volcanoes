@@ -42,7 +42,7 @@ class ImageSet(object):
         for image in self.image_dict.itervalues():
             yield image
 
-    def ground_truth_images(self, radius=None):
+    def ground_truth_images(self, class_value=None, radius=None):
         """
         Return all ground truths of all images, represented as RawSignals.
         Radius can be optionally overriden.
@@ -50,7 +50,7 @@ class ImageSet(object):
         return [
             gt_image
             for gt_images in [
-                image.ground_truth_images(radius)
+                image.ground_truth_images(class_value, radius)
                 for image in self
             ]
             for gt_image in gt_images

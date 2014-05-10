@@ -60,15 +60,22 @@ class RawSignal(object):
         except Exception:
             raise ValueError("Invalid rectangle points")
 
-    def ground_truth_images(self, radius=None):
+    def ground_truth_images(self, class_value=None, radius=None):
         """
         Returns associated ground truths as images,
         with an option to override radius
         """
-        return [
-            self.extract_rectangle(gt.get_rectangle(radius))
-            for gt in self.ground_truths
-        ]
+        if class_value:
+            return [
+                self.extract_rectangle(gt.get_rectangle(radius))
+                for gt in self.ground_truths
+                if gt.class_value == class_value
+            ]
+        else:
+            return [
+                self.extract_rectangle(gt.get_rectangle(radius))
+                for gt in self.ground_truths
+            ]
 
     def to_vector(self):
         """
