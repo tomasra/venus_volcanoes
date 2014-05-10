@@ -1,8 +1,9 @@
 import os
 import unittest
 import png
+import numpy as np
 from lib.utils.renderer import render_png, render_png_to_file, render_png_raw
-from lib.models import RawSignal
+from lib.models import Image
 
 
 class RendererTests(unittest.TestCase):
@@ -10,11 +11,13 @@ class RendererTests(unittest.TestCase):
         """
         Checks how simple signal is rendered into png format
         """
-        signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
-        image = render_png(signal)
-        self.assertEqual(image.info['greyscale'], True)
-        self.assertEqual(image.info['height'], 3)
-        self.assertEqual(image.info['width'], 2)
+        data = np.arange(6).reshape((3, 2))
+        # signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
+        image = Image(data)
+        rendered = render_png(image)
+        self.assertEqual(rendered.info['greyscale'], True)
+        self.assertEqual(rendered.info['height'], 3)
+        self.assertEqual(rendered.info['width'], 2)
 
     def test_render_png_to_file(self):
         """
@@ -26,8 +29,10 @@ class RendererTests(unittest.TestCase):
         if os.path.exists(test_filepath):
             os.remove(test_filepath)
 
-        signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
-        render_png_to_file(signal, test_filepath)
+        # signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
+        data = np.arange(6).reshape((3, 2))
+        image = Image(data)
+        render_png_to_file(image, test_filepath)
         self.assertTrue(
             os.path.exists(test_filepath),
             'PNG file was not created')
@@ -46,6 +51,8 @@ class RendererTests(unittest.TestCase):
         """
         Checks if signal is rendered and its raw png data is returned
         """
-        signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
-        image_data = render_png_raw(signal)
-        self.assertTrue('PNG' in image_data)
+        # signal = RawSignal(rows=3, cols=2, data=[0, 1, 2, 3, 4, 5])
+        data = np.arange(6).reshape((3, 2))
+        image = Image(data)
+        rendered = render_png_raw(image)
+        self.assertTrue('PNG' in rendered)

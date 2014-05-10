@@ -1,5 +1,6 @@
 import unittest
 import os
+import numpy as np
 from lib.utils.reader import read_signal, read_signals, list_signals
 from lib.utils.reader import read_lxyr, read_lxyrs
 
@@ -12,9 +13,11 @@ class ReaderTests(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         spr_path = os.path.join(cwd, 'test_files/')
         signal = read_signal(spr_path, 'test3')
-        self.assertEqual(signal.rows, 8)
-        self.assertEqual(signal.cols, 4)
-        self.assertSequenceEqual(signal.data, [i for i in xrange(0, 32)])
+        self.assertEqual(signal.data.shape[0], 8)
+        self.assertEqual(signal.data.shape[1], 4)
+        actual = signal.to_vector()
+        expected = np.arange(32)
+        self.assertTrue(np.array_equal(actual, expected))
         self.assertEqual(signal.name, "test3")
 
     def test_read_one_signal_failure(self):

@@ -1,5 +1,6 @@
 import os
-from lib.models import RawSignal, GroundTruth
+import numpy as np
+from lib.models import Image, GroundTruth
 
 
 def list_signals(directory):
@@ -48,10 +49,11 @@ def read_signal(directory, signal_name):
         with open(sdt_path, 'rb') as f:
             data = [int(b) for b in bytearray(f.read())]
 
+        # Convert to numpy array
+        data = np.array(data).reshape((rows, cols)).astype(np.uint8)
+
         # Create the signal
-        signal = RawSignal(
-            rows=rows,
-            cols=cols,
+        signal = Image(
             data=data,
             name=signal_name)
         return signal

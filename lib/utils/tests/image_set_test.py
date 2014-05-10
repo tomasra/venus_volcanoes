@@ -16,9 +16,9 @@ class ImageSetTests(unittest.TestCase):
 
         # assert
         self.assertEqual(len(image_set), 3)
-        self.assertEqual(image_set['test1'].rows, 4)
-        self.assertEqual(image_set['test2'].rows, 4)
-        self.assertEqual(image_set['test3'].rows, 8)
+        self.assertEqual(image_set['test1'].data.shape[0], 4)
+        self.assertEqual(image_set['test2'].data.shape[0], 4)
+        self.assertEqual(image_set['test3'].data.shape[0], 8)
         self.assertIsNone(image_set['here_be_dragons'])
 
     def test_get_image_with_ground_truths(self):
