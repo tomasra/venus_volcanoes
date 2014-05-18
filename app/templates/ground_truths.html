@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for image in images %}
+        <h3>{{ image['name'] }}</h3>
+        {% for gt_id in image['gt_ids'] %}
+            <img src="/images/{{ image['name'] }}/ground_truths/{{ gt_id }}"/>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
