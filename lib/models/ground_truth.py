@@ -1,8 +1,17 @@
 class GroundTruth(object):
-    def __init__(self, x, y, radius, class_value=None):
+    """
+    Represents positive volcano samples (with specified class)
+    or FOA points (with correlation value)
+    """
+    def __init__(
+            self, x, y,
+            radius=None,
+            corr_value=None,
+            class_value=None):
         self.x = x
         self.y = y
         self.radius = radius
+        self.corr_value = corr_value
         self.class_value = class_value
 
     def get_rectangle(self, radius=None):
