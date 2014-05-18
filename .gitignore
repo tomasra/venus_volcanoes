@@ -1,4 +1,5 @@
 *.pyc
+*.png
 venv/
 data/
 lib/.coverage
