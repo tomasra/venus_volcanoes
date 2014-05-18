@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block sidebar %}
+    <ul class="nav nav-stacked" id="sidebar">
+        {% for image_name in image_list %}
+            <li>
+                <a href="/images/{{ image_name }}">{{ image_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    {% if selected_image %}
+        <canvas id="image_canvas" width="1024" height="1024" style="background:url(/images/render/{{ selected_image }});"></canvas>
+        <script type='text/javascript'>
+            // Initialize canvas
+            var canvas = document.getElementById('image_canvas');
+            var context = canvas.getContext('2d');
+
+            // Render all ground truths
+            context.strokeStyle = "#FFFFFF";
+            $.get('/finder/{{ selected_image }}/ground_truths')
+                .done(function(response) {
+                    gts = JSON.parse(response);
+                    $(gts).each(function() {
+                        // TODO: just for testing - fix this
+                        // if (this.class_value == 1) {
+                            context.beginPath();
+                            context.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+                            context.stroke();
+                        // }
+                    });
+                });
+        </script>
+    {% else %}
+        <p>Please select an image.</p>
+    {% endif %}
+{% endblock %}
