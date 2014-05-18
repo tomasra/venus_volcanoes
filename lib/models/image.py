@@ -1,4 +1,7 @@
-# import numpy as np
+import numpy as np
+
+# What to fill with missing parts of cut rectangles
+DEFAULT_PIXEL_VALUE = 0
 
 
 class Image(object):
@@ -75,13 +78,13 @@ class Image(object):
         """
         if class_value:
             return [
-                self.extract_rectangle(gt.get_rectangle(radius))
+                self.cut(gt.get_rectangle(radius))
                 for gt in self.ground_truths
                 if gt.class_value == class_value
             ]
         else:
             return [
-                self.extract_rectangle(gt.get_rectangle(radius))
+                self.cut(gt.get_rectangle(radius))
                 for gt in self.ground_truths
             ]
 
@@ -90,3 +93,13 @@ class Image(object):
         Returns image data as simple vector
         """
         return self.data.flatten()
+
+    def normalize(self):
+        """
+        Normalizes image data with respect to local brightness
+        """
+        mean = self.data.mean()
+        std_dev = self.data.std()
+        ones = np.ones(self.data.shape, dtype=self.data.dtype)
+        self.data = self.data - (mean * ones) / std_dev
+        return self
