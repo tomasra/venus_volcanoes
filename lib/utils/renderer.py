@@ -1,6 +1,8 @@
 import png
 import StringIO
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 
 def render_png(image):
@@ -28,3 +30,8 @@ def render_png_to_file(image, filename):
     """
     rendered = render_png(image)
     rendered.save(filename)
+
+
+def render_png_plot(image):
+    plt.imshow(image, cmap=cm.Greys_r)
+    plt.show()
