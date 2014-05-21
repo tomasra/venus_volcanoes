@@ -34,7 +34,8 @@ def quantize_kmeans(image, count):
 def find_long_objects(
         image,
         obj_length=35,
-        obj_count=None):
+        obj_count=None,
+        return_image=False):
     """
     Returns binary image with ones representing
     objects longer than specified length
@@ -78,9 +79,10 @@ def find_long_objects(
     result = (
         np.in1d(labeled, longest_shape_labels)
         .reshape(labeled.shape)
-        .astype(np.uint8)
-        * 255   # make black and white image
     )
+    if return_image:
+        result = result.astype(np.uint8) * 255
+
     return result
 
 

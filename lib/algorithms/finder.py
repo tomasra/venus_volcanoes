@@ -1,4 +1,3 @@
-import os
 import numpy as np
 # import matplotlib.pyplot as plt
 from lib.models import GroundTruth
@@ -8,6 +7,7 @@ from skimage.feature import match_template
 # from skimage.morphology import skeletonize
 # from skimage import img_as_bool
 # from config import VOLCANO_PIXEL_SIZE
+from lib.algorithms.imaging import find_long_objects
 from config import FOA_THRESHOLD
 
 
@@ -36,6 +36,13 @@ class Finder(object):
             return_num=True)
         raw_points = self._aggregate_point_groups(labeled, num)
 
+        # Pixels of long objects (canyons, etc)
+        long_objects = find_long_objects(image.data)
+        lo_points = [
+            tuple(point)
+            for point in np.argwhere(long_objects)  # == True
+        ]
+
         ground_truths = [
             GroundTruth(
                 x=point[1],
@@ -44,6 +51,7 @@ class Finder(object):
                 radius=15
             )
             for point in raw_points
+            if (point[0], point[1]) not in lo_points
         ]
 
         return ground_truths

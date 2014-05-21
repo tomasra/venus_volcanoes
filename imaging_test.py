@@ -43,13 +43,25 @@ image = read_signal(image_dir, 'img1')
 # result = (quantized >= 140).astype(np.uint8)
 # result *= 255
 
-result = img.find_long_objects(image.data, 20)
+result = (
+    img.find_long_objects(image.data, 20)
+    .astype(np.uint8)
+    * 255
+)
 render_png_to_file(result, 'long_objects_20.png')
 
-result = img.find_long_objects(image.data, 35)
+result = (
+    img.find_long_objects(image.data, 35)
+    .astype(np.uint8)
+    * 255
+)
 render_png_to_file(result, 'long_objects_35.png')
 
-result = img.find_long_objects(image.data, 50)
+result = (
+    img.find_long_objects(image.data, 50)
+    .astype(np.uint8)
+    * 255
+)
 render_png_to_file(result, 'long_objects_50.png')
 
 # import pdb; pdb.set_trace()
