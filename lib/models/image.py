@@ -1,4 +1,5 @@
 import numpy as np
+from config import VOLCANO_RADIUS
 
 # What to fill with missing parts of cut rectangles
 DEFAULT_PIXEL_VALUE = 0
@@ -71,21 +72,29 @@ class Image(object):
             p1[0]:p2[0] + 1]
         )
 
-    def ground_truth_images(self, class_value=None, radius=None):
+    def ground_truth_images(
+            self,
+            class_value=None,
+            radius=VOLCANO_RADIUS,
+            ground_truths=None):
         """
         Returns associated ground truths as images,
         with an option to override radius
         """
+        # Possibility to override existing volcanoes
+        if not ground_truths:
+            ground_truths = self.ground_truths
+
         if class_value:
             return [
                 self.cut(gt.get_rectangle(radius))
-                for gt in self.ground_truths
+                for gt in ground_truths
                 if gt.class_value == class_value
             ]
         else:
             return [
                 self.cut(gt.get_rectangle(radius))
-                for gt in self.ground_truths
+                for gt in ground_truths
             ]
 
     def to_vector(self):
