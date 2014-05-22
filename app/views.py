@@ -57,10 +57,7 @@ def finder_ground_truths(image_name):
         IMAGE_DIR,
         GROUND_TRUTH_DIR,
         [image_name])
-    volcanoes = image_set_train.ground_truth_images(
-        class_value=1,
-        radius=VOLCANO_RADIUS)
-    finder = Finder(volcanoes)
+    finder = Finder(image_set_train)
     results = finder.run(image_set_test[image_name])
 
     # floats are incompatible with JSON???
