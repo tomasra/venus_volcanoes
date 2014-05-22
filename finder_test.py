@@ -13,9 +13,6 @@ gt_dir = os.path.join(cwd, 'data/GroundTruths')
 foa_dir = os.path.join(cwd, 'data/FOA/exp_A/exp_A1/tst')
 
 
-
-
-
 image_set_train = ImageSet(image_dir, gt_dir, ['img2', 'img3', 'img4'])
 image_set_test = ImageSet(image_dir, gt_dir, ['img1'])
 
@@ -23,11 +20,12 @@ image_set_test = ImageSet(image_dir, gt_dir, ['img1'])
 # for i in xrange(1, 2):
     # All volcano classes
 
-volcanoes = image_set_train.ground_truth_images(
-    # class_value=i,
-    radius=VOLCANO_RADIUS)
+# volcanoes = image_set_train.ground_truth_images(
+#     # class_value=i,
+#     radius=VOLCANO_RADIUS)
 
-finder = Finder(volcanoes)
+# finder = Finder(volcanoes)
+finder = Finder(image_set_train)
 actual = finder.run(image_set_test['img1'])
 expected = read_lxyv(foa_dir, 'img1')
 

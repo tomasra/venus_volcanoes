@@ -8,13 +8,29 @@ from skimage.feature import match_template
 # from skimage import img_as_bool
 # from config import VOLCANO_PIXEL_SIZE
 from lib.algorithms.imaging import find_long_objects
-from config import FOA_THRESHOLD
+from config import FOA_THRESHOLD, VOLCANO_RADIUS
 
 
 class Finder(object):
-    def __init__(self, training_images):
+    def __init__(
+            self,
+            training_image_set,
+            radius=VOLCANO_RADIUS,
+            only_classes=None):
+        self.radius = radius
+        # Optionally specifiy classes to be trained with
+        if only_classes:
+            training_volcanoes = []
+            for klass in only_classes:
+                training_volcanoes += training_image_set.ground_truth_images(
+                    class_value=klass,
+                    radius=self.radius)
+        else:
+            training_volcanoes = training_image_set.ground_truth_images(
+                radius=self.radius)
+
         self.template = self._image_average(
-            training_images)
+            training_volcanoes)
 
     def run(self, image):
         """
@@ -48,7 +64,7 @@ class Finder(object):
                 x=point[1],
                 y=point[0],
                 corr_value=result[point[0]][point[1]],
-                radius=15
+                radius=self.radius
             )
             for point in raw_points
             if (point[0], point[1]) not in lo_points
