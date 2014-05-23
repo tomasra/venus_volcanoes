@@ -52,13 +52,10 @@ def find_long_objects(
     # Segmentation
     labeled, count = msr.label(thresholded, structure=structure)
 
+    # Approximate object lengths
+    lengths = _shape_lengths(labeled, count)
+
     if obj_count:
-        # Take specified number of longest objects
-        lengths = [
-            (label, _shape_length(labeled, label))
-            for label in xrange(1, count)
-            # Exclude 0-label!
-        ]
         # Take 'obj_count' number of longest shape labels
         longest_shape_labels = [
             shape[0]    # Label no.
@@ -70,9 +67,9 @@ def find_long_objects(
     else:
         # Filter by object length
         longest_shape_labels = [
-            label
-            for label in xrange(1, count)
-            if _shape_length(labeled, label) >= obj_length
+            lengths[i][1]
+            for i in xrange(1, count + 1)
+            if lengths[i][1] >= obj_length
         ]
 
     # Show only these longest shapes
@@ -86,20 +83,25 @@ def find_long_objects(
     return result
 
 
-def _shape_length(image, label):
+def _shape_lengths(labeled_image, label_count):
     """
-    Takes top-left and bottom-right shape points
-    and calculates distance between them
+    Collect bounding boxes of all non-zero labeled regions
+    and return their diagonal lengths
     """
-    # rows, cols = np.where(image == label)
-    # if rows.any() and cols.any():
-        # row_diff = np.max(rows) - np.min(rows)
-        # col_diff = np.max(cols) - np.min(cols)
-    points = np.argwhere(image == label)
-    if points.any():
-        height = np.abs(points[0][0] - points[-1][0])
-        width = np.abs(points[0][1] - points[-1][1])
-        length = np.sqrt(width ** 2 + height ** 2)
-        return length
-    else:
-        return 0.0
+    top_left_points = [(0, 0)] * (label_count + 1)
+    right_bottom_points = [(0, 0)] * (label_count + 1)
+
+    for (x, y), value in np.ndenumerate(labeled_image):
+        # Exclude 0-labeled regions
+        if value != 0:
+            # First point of this label?
+            if top_left_points[value] == (0, 0):
+                top_left_points[value] = (x, y)
+            # Last point of the label
+            right_bottom_points[value] = (x, y)
+
+    # Diagonal lengths
+    diffs = np.array(top_left_points) - np.array(right_bottom_points)
+    lengths = np.linalg.norm(diffs, axis=1)
+    labels = range(0, label_count + 2)
+    return zip(labels, lengths)
