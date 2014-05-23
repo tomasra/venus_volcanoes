@@ -1,4 +1,6 @@
 from lib.utils.reader import read_signals, read_lxyrs
+from lib.utils.reader import read_lxyv
+from config import NON_VOLCANO_CLASS
 
 
 class ImageSet(object):
@@ -6,7 +8,9 @@ class ImageSet(object):
             self,
             data_dir,
             ground_truth_dir=None,
-            image_names=None):
+            foa_dir=None,
+            image_names=None,
+            negative_examples=False):
         self.data_dir = data_dir
         self.ground_truth_dir = ground_truth_dir
 
@@ -22,6 +26,17 @@ class ImageSet(object):
             for name, gt_list in read_lxyrs(ground_truth_dir).iteritems():
                 if (self[name]):
                     self[name].ground_truths = gt_list
+
+        # Additionally read LXYV files
+        # and add 0-class non-volcano examples to image ground truth lists
+        if negative_examples and foa_dir:
+            for name, image in self.image_dict.iteritems():
+                foas = read_lxyv(foa_dir, name)
+                negatives = [
+                    foa for foa in foas
+                    if foa.class_value == NON_VOLCANO_CLASS
+                ]
+                image.ground_truths += negatives
 
     def __len__(self):
         return len(self.image_dict)
