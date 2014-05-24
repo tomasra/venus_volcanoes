@@ -16,23 +16,11 @@ class Image(object):
         Returns row by specified index or slice.
         """
         return self.data.__getitem__(key)
-        # if isinstance(key, slice):
-        #     # Collect rows according to slice
-        #     return [self[i] for i in xrange(*key.indices(self.rows))]
-        # elif isinstance(key, int):
-        #     # Check for negative or out-of-range indexes
-        #     if key >= self.rows or key < 0:
-        #         raise IndexError("Sequence index out of range.")
-        #     return self.data[(self.cols * key):(self.cols * (key + 1))]
-        # else:
-        #     raise TypeError("Invalid argument type.")
 
     def __iter__(self):
         """
         Iterates through all rows
         """
-        # for i in range(0, self.rows):
-        #     yield self[i]
         for row in self.data:
             yield row
 
@@ -42,29 +30,6 @@ class Image(object):
         as a new RawSignal object.
         p1 and p2 - top left and bottom right points, respectively
         """
-        # p1, p2 = rectangle[0], rectangle[1]
-        # try:
-        #     # Increment cols/rows to allow returning a single item
-        #     # if both rectangle points are the same
-        #     cols = (p2[0] - p1[0]) + 1    # x coordinates
-        #     rows = (p2[1] - p1[1]) + 1    # y coordinates
-
-        #     # Check for negative or out-of-range cols/rows.
-        #     if cols < 0 or cols > self.cols:
-        #         raise Exception
-        #     if rows < 0 or rows > self.rows:
-        #         raise Exception
-
-        #     # Collect a flat list of items bounded by rectangle.
-        #     data = [
-        #         point
-        #         for row in self[p1[1]:p1[1] + rows]
-        #         for point in row[p1[0]:p1[0] + cols]
-        #     ]
-        #     return RawSignal(rows, cols, data)
-        # except Exception:
-        #     raise ValueError("Invalid rectangle points")
-
         p1, p2 = rectangle[0], rectangle[1]
         # return self.data[row_from:row_to, col_from:col_to]
         return Image(self.data[
@@ -76,7 +41,9 @@ class Image(object):
             self,
             class_value=None,
             radius=VOLCANO_RADIUS,
-            ground_truths=None):
+            ground_truths=None,
+            valid_only=False,
+            to_vectors=False):
         """
         Returns associated ground truths as images,
         with an option to override radius
@@ -85,17 +52,35 @@ class Image(object):
         if not ground_truths:
             ground_truths = self.ground_truths
 
+        # Collect the images
         if class_value:
-            return [
+            images = [
                 self.cut(gt.get_rectangle(radius))
                 for gt in ground_truths
                 if gt.class_value == class_value
             ]
         else:
-            return [
+            images = [
                 self.cut(gt.get_rectangle(radius))
                 for gt in ground_truths
             ]
+
+        # Remove these having invalid dimensions
+        # (according to specified radius)
+        # This can happen when volcano center is at the very edge of main image
+        if valid_only:
+            expected_length = pow(radius * 2 + 1, 2)
+            images = [
+                image
+                for image in images
+                if len(image.to_vector()) == expected_length
+            ]
+
+        # Vectorize?
+        if to_vectors:
+            images = [image.to_vector() for image in images]
+
+        return images
 
     def to_vector(self):
         """
