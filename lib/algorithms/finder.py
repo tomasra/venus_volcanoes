@@ -32,7 +32,7 @@ class Finder(object):
         self.template = self._image_average(
             training_volcanoes)
 
-    def run(self, image):
+    def run(self, image, skeletonize=False):
         """
         Return list of possible volcanoes
         (GroundTruth objects)
@@ -43,7 +43,11 @@ class Finder(object):
         binary = result > FOA_THRESHOLD
 
         # Shrink larger regions?
-        skeletonized = fm.skeletonize(binary)
+        # Note: this may cause volcano centers to drift away
+        if skeletonize:
+            skeletonized = fm.skeletonize(binary)
+        else:
+            skeletonized = binary
 
         # Aggregate small pixel groups
         labeled, num = fm.label(
