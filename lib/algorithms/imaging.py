@@ -1,29 +1,16 @@
 import numpy as np
 import scipy.ndimage.measurements as msr
 from scipy.cluster.vq import kmeans, vq
+from sklearn.cluster import KMeans
+from lib.models import Image
 
 
-def quantize_naive(image, count):
-    """
-    Simplest possible quantization.
-    Group image colors into specified count of centroids,
-    evenly distributed between 0 and 256
-    """
-    pixels = np.reshape(image, (image.shape[0] * image.shape[1]))
-    # centroids, _ = kmeans(pixels, count)
-    # import pdb; pdb.set_trace()
-    # quantized, _ = vq(pixels, centroids)
-    # quantized_idx = np.reshape(quantized, (image.shape[0], image.shape[1]))
-    # result = centroids[quantized_idx]
-    return None  # TODO
-
-
-def quantize_kmeans(image, count):
+def quantize_kmeans(image, colors):
     """
     Image color quantization with k-means
     """
     pixels = np.reshape(image, (image.shape[0] * image.shape[1]))
-    centroids, _ = kmeans(pixels, count)
+    centroids, _ = kmeans(pixels, colors)
     quantized, _ = vq(pixels, centroids)
     quantized_idx = np.reshape(quantized, (image.shape[0], image.shape[1]))
     result = centroids[quantized_idx]
@@ -81,6 +68,33 @@ def find_long_objects(
         result = result.astype(np.uint8) * 255
 
     return result
+
+
+def cluster_images(images, cluster_count):
+    """
+    Cluster images into specified number of clusters using k-means
+    """
+    shapes = set([image.data.shape for image in images])
+    if len(shapes) > 1:
+        raise ValueError("Images should have the same dimensions")
+    else:
+        image_shape = list(shapes)[0]
+
+    # Do clustering
+    vectors = [
+        image.to_vector()
+        for image in images
+    ]
+    kmeans = KMeans(n_clusters=cluster_count)
+    kmeans.fit(vectors)
+    centroids = kmeans.cluster_centers_
+
+    # Return Image instances
+    clustered_images = [
+        Image(centroid.reshape(image_shape))
+        for centroid in centroids
+    ]
+    return clustered_images
 
 
 def _shape_lengths(labeled_image, label_count):
